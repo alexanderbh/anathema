@@ -1,0 +1,18 @@
+
+@comp1
+    vstack
+        border
+            vstack
+                vstack
+                    border
+                        vstack
+                            vstack
+                                vstack
+                                    vstack
+                                        vstack
+                                            vstack
+                                                vstack
+                                                    vstack
+                                                        text [foreground: "red", italic: true] "You"
+                                                        text [foreground: "green"] "are"
+                                                        text [foreground: "yellow", bold: true] "great!"

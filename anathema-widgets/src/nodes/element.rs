@@ -53,44 +53,46 @@ impl<'bp> Element<'bp> {
         // If one of the children returns a `Changed` layout result
         // the transition the widget into full layout mode
 
-        let count = children.len();
-        let mut rebuild = self.container.cache.count_check(count);
+        if !cfg!(feature = "disable_cache") {
+            let count = children.len();
+            let mut rebuild = self.container.cache.count_check(count);
 
-        if let Some(size) = self.cached_size() {
-            _ = children.each(ctx, |ctx, node, children| {
-                // If we are here it's because the current node has a valid cache.
-                // We need to use the constraint for the given node in this case as
-                // the constraint is not managed by the current node.
-                //
-                // Example:
-                // If the current node is a border with a fixed width and height,
-                // it would create a new constraint for the child node that is the
-                // width and height - the border size.
-                //
-                // However the border does not store this constraint, it's stored
-                // on the node itself.
-                // Therefore we pass the nodes its own constraint.
+            if let Some(size) = self.cached_size() {
+                _ = children.each(ctx, |ctx, node, children| {
+                    // If we are here it's because the current node has a valid cache.
+                    // We need to use the constraint for the given node in this case as
+                    // the constraint is not managed by the current node.
+                    //
+                    // Example:
+                    // If the current node is a border with a fixed width and height,
+                    // it would create a new constraint for the child node that is the
+                    // width and height - the border size.
+                    //
+                    // However the border does not store this constraint, it's stored
+                    // on the node itself.
+                    // Therefore we pass the nodes its own constraint.
 
-                let constraints = match node.container.cache.constraints() {
-                    None => constraints,
-                    Some(constraints) => constraints,
-                };
+                    let constraints = match node.container.cache.constraints() {
+                        None => constraints,
+                        Some(constraints) => constraints,
+                    };
 
-                match node.layout(children, constraints, ctx)? {
-                    Layout::Changed(_) => {
-                        rebuild = true;
-                        Ok(ControlFlow::Break(()))
+                    match node.layout(children, constraints, ctx)? {
+                        Layout::Changed(_) => {
+                            rebuild = true;
+                            Ok(ControlFlow::Break(()))
+                        }
+                        Layout::Floating(_) | Layout::Unchanged(_) => Ok(ControlFlow::Continue(())),
                     }
-                    Layout::Floating(_) | Layout::Unchanged(_) => Ok(ControlFlow::Continue(())),
+                })?;
+
+                if !self.container.cache.count_check(count) {
+                    rebuild = true;
                 }
-            })?;
 
-            if !self.container.cache.count_check(count) {
-                rebuild = true;
-            }
-
-            if !rebuild {
-                return Ok(Layout::Unchanged(size));
+                if !rebuild {
+                    return Ok(Layout::Unchanged(size));
+                }
             }
         }
 
@@ -109,6 +111,8 @@ impl<'bp> Element<'bp> {
         attribute_storage: &AttributeStorage<'bp>,
         viewport: Viewport,
     ) {
+        #[cfg(feature = "profile")]
+        puffin::profile_function!();
         self.container.position(children, pos, attribute_storage, viewport)
     }
 
@@ -119,6 +123,8 @@ impl<'bp> Element<'bp> {
         ctx: PaintCtx<'_, Unsized>,
         attribute_storage: &AttributeStorage<'bp>,
     ) {
+        #[cfg(feature = "profile")]
+        puffin::profile_function!();
         self.container.paint(children, ctx, attribute_storage);
     }
 

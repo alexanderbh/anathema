@@ -1,0 +1,9 @@
+vstack
+    text "Ticks: "
+        span state.ticks
+    border
+        vstack
+            $children
+    if state.ticks % 2 == 0
+        text "Shown on even ticks!"
+    text "Always shown!"

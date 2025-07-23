@@ -25,6 +25,7 @@ puffin = { version = "0.19.1", features = ["web"], optional = true }
 default = []
 profile = ["puffin"]
 filelog = []
+disable_cache = []
 
 [lints]
 workspace = true
