@@ -307,10 +307,6 @@ impl<'a, 'bp> LayoutForEach<'a, 'bp> {
             })
             .unwrap_or(Ok(ControlFlow::Continue(())))
     }
-
-    pub(crate) fn len(&self) -> usize {
-        self.tree.layout_len()
-    }
 }
 
 // Generate the next available widget into the tree

@@ -12,7 +12,6 @@ use crate::{LayoutForEach, PaintChildren, Style, WidgetId};
 pub struct Cache {
     pub(super) size: Size,
     pub(super) pos: Option<Pos>,
-    constraints: Option<Constraints>,
     pub(super) child_count: usize,
     valid: bool,
 }
@@ -21,17 +20,14 @@ impl Cache {
     pub(crate) const ZERO: Self = Self {
         size: Size::ZERO,
         pos: None,
-        // Constraints are `None` for the root node
-        constraints: None,
         child_count: 0,
         valid: false,
     };
 
-    const fn new(size: Size, constraints: Constraints) -> Self {
+    const fn new(size: Size) -> Self {
         Self {
             size,
             pos: None,
-            constraints: Some(constraints),
             child_count: 0,
             valid: true,
         }
@@ -54,16 +50,6 @@ impl Cache {
         *self = cache;
         changed
     }
-
-    pub(crate) fn constraints(&self) -> Option<Constraints> {
-        self.constraints
-    }
-
-    pub(crate) fn count_check(&mut self, count: usize) -> bool {
-        let c = self.child_count;
-        self.child_count = count;
-        c != count
-    }
 }
 
 /// Wraps a widget and retain some geometry for the widget
@@ -85,7 +71,7 @@ impl Container {
         // NOTE: The layout is possibly skipped in the Element::layout call
 
         let size = self.inner.any_layout(children, constraints, self.id, ctx)?;
-        let cache = Cache::new(size, constraints);
+        let cache = Cache::new(size);
 
         let changed = self.cache.changed(cache);
 
