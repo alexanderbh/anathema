@@ -35,6 +35,7 @@ default = []
 profile = ["anathema-runtime/profile", "anathema-widgets/profile", "anathema-backend/profile"]
 serde = ["anathema-state/serde", "anathema-store/serde"]
 ssh = ["anathema-ssh/ssh"]
+osc = ["anathema-backend/osc"]
 # filelog = ["anathema-debug/filelog", "anathema-widgets/filelog", "anathema-runtime/filelog"]
 
 [lints]
