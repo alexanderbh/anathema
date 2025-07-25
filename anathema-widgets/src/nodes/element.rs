@@ -1,5 +1,3 @@
-use std::ops::ControlFlow;
-
 use anathema_geometry::{Pos, Region, Size};
 use anathema_value_resolver::AttributeStorage;
 
