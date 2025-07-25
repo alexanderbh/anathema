@@ -166,12 +166,6 @@ impl TuiBackend<std::io::Stdout> {
         inst
     }
 
-    /// Disable raw mode.
-    pub fn disable_raw_mode(self) -> Self {
-        let _ = Screen::disable_raw_mode();
-        self
-    }
-
     /// Set the background color of the terminal using OSC 11.
     /// Might not work on all terminals. Ansi values (0-255) are not supported.
     /// Use RGB or named colors.
